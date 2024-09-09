@@ -1,4 +1,5 @@
 import http from '@/utils/http'
+import data from "@/mock/_data/area";
 
 const BASE_URL = '/sport/arrangement'
 
@@ -49,6 +50,12 @@ export function getArrangement(id: string) {
 export function addArrangement(data: any) {
   return http.post(`${BASE_URL}`, data)
 }
+
+/** @desc 个人报名 */
+export function applyProject(projectId: string, gtype: string) {
+  return http.get(`${BASE_URL}/apply/${projectId}/${gtype}`)
+}
+
 
 /** @desc 修改项目安排  */
 export function updateArrangement(data: any, id: string) {

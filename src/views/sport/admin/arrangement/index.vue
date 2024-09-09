@@ -13,32 +13,30 @@
       @refresh="search"
     >
       <template #custom-left>
-	        <a-input v-model="queryForm.projectId" placeholder="请输入项目id" allow-clear @change="search">
+	        <a-input v-model="queryForm.projectId" placeholder="请输入项目名称" allow-clear @change="search">
 	          <template #prefix><icon-search /></template>
 	        </a-input>
-	        <a-input v-model="queryForm.userId" placeholder="请输入裁判员id" allow-clear @change="search">
+	        <a-input v-model="queryForm.userId" placeholder="请输入裁判员姓名" allow-clear @change="search">
 	          <template #prefix><icon-search /></template>
 	        </a-input>
-	        <a-input v-model="queryForm.typeId" placeholder="请输入运动员id / 团体id" allow-clear @change="search">
+	        <a-input v-model="queryForm.typeId" placeholder="请输入运动员姓名/ 团体名称" allow-clear @change="search">
 	          <template #prefix><icon-search /></template>
 	        </a-input>
-	        <a-input v-model="queryForm.isCancel" placeholder="请输入是否取消 0：取消，1：未取消" allow-clear @change="search">
-	          <template #prefix><icon-search /></template>
-	        </a-input>
+        <a-select
+            v-model="queryForm.isCancel"
+            placeholder="请选择个人/团队比赛"
+            allow-clear
+            style="width: 200px"
+            @change="search"
+        >
+          <a-option :value="0">未取消</a-option>
+          <a-option :value="1">已取消</a-option>
+        </a-select>
         <a-button @click="reset">重置</a-button>
       </template>
-      <template #custom-right>
-        <a-button v-permission="['sport:arrangement:add']" type="primary" @click="onAdd">
-          <template #icon><icon-plus /></template>
-          <span>新增</span>
-        </a-button>
-        <a-tooltip content="导出">
-          <a-button v-permission="['sport:arrangement:export']" class="gi_hover_btn-border" @click="onExport">
-            <template #icon>
-              <icon-download />
-            </template>
-          </a-button>
-        </a-tooltip>
+      <template #isCancel="{ record }">
+        <a-tag v-if="record.gtype === '0'" color="green">未取消</a-tag>
+        <a-tag v-else color="red">已取消</a-tag>
       </template>
       <template #name="{ record }">
         <a-link @click="onDetail(record)">{{ record.name }}</a-link>
@@ -97,12 +95,10 @@ const {
 } = useTable((page) => listArrangement({ ...queryForm, ...page }), { immediate: true })
 
 const columns: TableInstanceColumns[] = [
-  { title: '安排id 安排表的主键', dataIndex: 'id', slotName: 'id' },
-  { title: '项目id', dataIndex: 'projectId', slotName: 'projectId' },
-  { title: '裁判员id', dataIndex: 'userId', slotName: 'userId' },
-  { title: '运动员id / 团体id', dataIndex: 'typeId', slotName: 'typeId' },
-  { title: '是否取消 0：取消，1：未取消', dataIndex: 'isCancel', slotName: 'isCancel' },
-  { title: '取消原因 若未取消则为NULL', dataIndex: 'reason', slotName: 'reason' },
+  { title: '项目名称', dataIndex: 'projectId', slotName: 'projectId' },
+  { title: '运动员名称/团体名称', dataIndex: 'typeId', slotName: 'typeId' },
+  { title: '是否取消', dataIndex: 'isCancel', slotName: 'isCancel' },
+  { title: '取消原因', dataIndex: 'reason', slotName: 'reason' },
   {
     title: '操作',
     slotName: 'action',

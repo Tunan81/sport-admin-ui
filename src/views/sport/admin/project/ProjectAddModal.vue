@@ -1,24 +1,54 @@
 <template>
   <a-modal
-    v-model:visible="visible"
-    :title="title"
-    :mask-closable="false"
-    :esc-to-close="false"
-    :modal-style="{ maxWidth: '520px' }"
-    width="90%"
-    @before-ok="save"
-    @close="reset"
+      v-model:visible="visible"
+      :title="title"
+      :mask-closable="false"
+      :esc-to-close="false"
+      :modal-style="{ maxWidth: '520px' }"
+      width="90%"
+      @before-ok="save"
+      @close="reset"
   >
-    <GiForm ref="formRef" v-model="form" :options="options" :columns="columns" />
+    <a-form :model="form" :auto-label-width="true" layout="horizontal">
+      <a-space direction="vertical" :style="{ width: '300px' }" style="margin: 0 auto">
+        <a-form-item field="number" :style="{ width: '300px' }" label="项目编号">
+          <a-input v-model="form.number" placeholder="请输入项目编号" />
+        </a-form-item>
+        <a-form-item field="name" :style="{ width: '300px' }" label="项目名称">
+          <a-input v-model="form.name" placeholder="请输入项目名称" />
+        </a-form-item>
+        <a-form-item field="name" :style="{ width: '300px' }" label="项目介绍">
+          <a-textarea v-model="form.introduction" placeholder="请输入项目介绍" max-length="64"/>
+        </a-form-item>
+        <a-form-item field="type" :style="{ width: '300px' }" label="项目类型">
+          <a-select v-model="form.type" placeholder="请选择项目类型">
+            <a-option :value="'0'">个人</a-option>
+            <a-option :value="'1'">团队</a-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item field="gtype" :style="{ width: '300px' }" label="性别">
+          <a-select v-model="form.gtype" placeholder="请选择性别">
+            <a-option :value="'1'">男</a-option>
+            <a-option :value="'2'">女</a-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item field="upnum" :style="{ width: '300px' }" label="参加人数">
+          <a-input v-model="form.upnum" placeholder="请输入参加人数">
+          </a-input>
+        </a-form-item>
+        <a-form-item field="renum" :style="{ width: '300px' }" label="裁判人数">
+          <a-input v-model="form.renum" placeholder="请输入裁判人数">
+          </a-input>
+        </a-form-item>
+      </a-space>
+    </a-form>
   </a-modal>
 </template>
 
 <script setup lang="ts">
-import { Message } from '@arco-design/web-vue'
-import { getProject, addProject, updateProject } from '@/apis'
-import { type Columns, GiForm, type Options } from '@/components/GiForm'
-import { useForm } from '@/hooks'
-import { useDict } from '@/hooks/app'
+import {Message} from '@arco-design/web-vue'
+import {getProject, addProject, updateProject} from '@/apis'
+import {useForm} from '@/hooks'
 
 const emit = defineEmits<{
   (e: 'save-success'): void
@@ -27,61 +57,20 @@ const emit = defineEmits<{
 const dataId = ref('')
 const isUpdate = computed(() => !!dataId.value)
 const title = computed(() => (isUpdate.value ? '修改比赛项目 ' : '新增比赛项目 '))
-const formRef = ref<InstanceType<typeof GiForm>>()
 
-
-const options: Options = {
-  form: {},
-  col: { xs: 24, sm: 24, md: 24, lg: 24, xl: 24, xxl: 24 },
-  btns: { hide: true }
-}
-
-const columns: Columns = [
-  {
-    label: '项目编号',
-    field: 'number',
-    type: 'input',
-    rules: [{ required: true, message: '请输入项目编号' }]
-  },
-  {
-    label: '项目名称',
-    field: 'name',
-    type: 'input',
-    rules: [{ required: true, message: '请输入项目名称' }]
-  },
-  {
-    label: '规则介绍',
-    field: 'introduction',
-    type: 'input',
-    rules: [{ required: true, message: '请输入规则介绍' }]
-  },
-  {
-    label: '比赛类型 ',
-    field: 'type',
-    type: 'input',
-    rules: [{ required: true, message: '请输入比赛类型 ' }]
-  },
-  {
-    label: '招收人数 / 队数',
-    field: 'upnum',
-    type: 'input',
-    rules: [{ required: true, message: '请输入招收人数 / 队数' }]
-  },
-  {
-    label: '裁判员数量',
-    field: 'renum',
-    type: 'input',
-    rules: [{ required: true, message: '请输入裁判员数量' }]
-  },
-]
-
-const { form, resetForm } = useForm({
-    // todo 待补充
+const {form, resetForm} = useForm({
+  number: '',
+  name: '',
+  introduction: '',
+  gtype: '',
+  type: '',
+  upnum: '',
+  renum: ''
+  // todo 待补充
 })
 
 // 重置
 const reset = () => {
-  formRef.value?.formRef?.resetFields()
   resetForm()
 }
 
@@ -105,8 +94,8 @@ const onUpdate = async (id: string) => {
 // 保存
 const save = async () => {
   try {
-    const isInvalid = await formRef.value?.formRef?.validate()
-    if (isInvalid) return false
+    // const isInvalid = await formRef.value?.formRef?.validate()
+    // if (isInvalid) return false
     if (isUpdate.value) {
       await updateProject(form, dataId.value)
       Message.success('修改成功')
@@ -121,5 +110,5 @@ const save = async () => {
   }
 }
 
-defineExpose({ onAdd, onUpdate })
+defineExpose({onAdd, onUpdate})
 </script>

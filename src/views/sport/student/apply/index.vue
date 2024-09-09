@@ -52,12 +52,13 @@
 
 <script setup lang="ts">
 import ProjectDetailDrawer from './ProjectDetailDrawer.vue'
-import { type ProjectResp, type ProjectQuery, deleteProject, exportProject, listProject } from '@/apis'
+import { type ProjectResp, type ProjectQuery, deleteProject, exportProject, listProject, applyProject} from '@/apis'
 import type { TableInstanceColumns } from '@/components/GiTable/type'
 import { useDownload, useTable } from '@/hooks'
 import { isMobile } from '@/utils'
 import has from '@/utils/has'
 import { useDict } from '@/hooks/app'
+import {Message} from "@arco-design/web-vue";
 
 defineOptions({ name: 'Project' })
 
@@ -112,8 +113,11 @@ const onDelete = (item: ProjectResp) => {
 }
 
 // 报名
-const apply = (record: any) => {
-  console.log(record.id)
+const apply = async (record: any) => {
+  console.log(record.id + record.gtype)
+  const res = await applyProject(record.id, record.gtype)
+  console.log(res)
+  Message.success(res.msg)
 }
 
 const ProjectDetailDrawerRef = ref<InstanceType<typeof ProjectDetailDrawer>>()
